@@ -1,12 +1,16 @@
 import { SessionProvider } from "next-auth/react";
-import '../styles/globals.css'
+import { TaskProvider } from "../context/TaskContext";
+import '../styles/globals.css';
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   return (
     <SessionProvider session={session}>
-      <Component {...pageProps} />
+      <TaskProvider>
+        <Component {...pageProps} />
+      </TaskProvider>
     </SessionProvider>
   );
 }
 
 export default MyApp;
+

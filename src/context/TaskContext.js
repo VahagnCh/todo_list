@@ -1,23 +1,52 @@
-import { createContext, useState, useContext } from "react";
+import { createContext, useState, useContext, useEffect } from "react";
+import { useSession } from "next-auth/react";
 
 const TaskContext = createContext();
 
 export function TaskProvider({ children }) {
   const [tasks, setTasks] = useState([]);
+  const { data: session } = useSession();
+
+  // Fetch tasks from API for the logged-in user
+  useEffect(() => {
+    if (session) {
+      const fetchTasks = async () => {
+        try {
+          const res = await fetch("/api/tasks");
+          const data = await res.json();
+          const userTasks = data.filter((task) => task.userId === session.user.id);
+          setTasks(userTasks);
+        } catch (error) {
+          console.error("Failed to load tasks:", error);
+        }
+      };
+      fetchTasks();
+    }
+  }, [session]);
 
   // Add a new task
-  const addTask = (task) => {
-    setTasks((prevTasks) => [...prevTasks, { ...task, id: Date.now() }]);
+  const addTask = async (task) => {
+    try {
+      const res = await fetch("/api/tasks", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(task),
+      });
+      const newTask = await res.json();
+      setTasks((prevTasks) => [...prevTasks, newTask]);
+    } catch (error) {
+      console.error("Failed to add task:", error);
+    }
   };
 
-  // Edit an existing task
   const editTask = (updatedTask) => {
     setTasks((prevTasks) =>
       prevTasks.map((task) => (task.id === updatedTask.id ? updatedTask : task))
     );
   };
 
-  // Delete a task
   const deleteTask = (taskId) => {
     setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
   };

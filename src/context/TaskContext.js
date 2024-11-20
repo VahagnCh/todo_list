@@ -47,8 +47,28 @@ export function TaskProvider({ children }) {
     );
   };
 
-  const deleteTask = (taskId) => {
-    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
+  const deleteTask = async (taskId) => {
+    try {
+      console.log('Deleting task with ID:', taskId);
+      
+      const res = await fetch(`/api/tasks/${taskId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      console.log('Delete response status:', res.status);
+
+      if (res.ok) {
+        setTasks((prevTasks) => prevTasks.filter((task) => task._id !== taskId));
+      } else {
+        const errorData = await res.json();
+        console.error('Failed to delete task:', errorData);
+      }
+    } catch (error) {
+      console.error('Error in deleteTask:', error);
+    }
   };
 
   return (

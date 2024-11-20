@@ -15,10 +15,18 @@ export default NextAuth({
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
     }),
   ],
-  adapter: MongoDBAdapter(clientPromise),
+  adapter: MongoDBAdapter(clientPromise, {
+    databaseName: 'your_database_name',
+  }),
   secret: process.env.NEXTAUTH_SECRET,
+  debug: true,
   callbacks: {
+    async signIn({ user, account, profile }) {
+      console.log('Sign in attempt:', { user, account, profile });
+      return true;
+    },
     async session({ session, user }) {
+      console.log('Session callback:', { session, user });
       session.user.id = user.id;
       return session;
     },

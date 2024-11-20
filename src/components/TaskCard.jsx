@@ -1,5 +1,5 @@
 export default function TaskCard({ task, onEdit, onDelete }) {
-    return (
+  return (
       <div className="border p-4 rounded-lg shadow-md mb-4 w-full md:w-1/2 lg:w-1/3">
         <h3 className="font-bold text-lg mb-2">{task.title}</h3>
         <p className="text-gray-700 mb-1">{task.description}</p>
@@ -15,8 +15,13 @@ export default function TaskCard({ task, onEdit, onDelete }) {
             Edit
           </button>
           <button
-            onClick={() => onDelete(task._id)}
-            className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+            onClick={() => {
+                console.log('Task object:', task);
+                console.log('Task ID:', task._id);
+                onDelete(task._id);
+            }}
+            className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition-colors"
+            aria-label={`Delete ${task.title}`}
           >
             Delete
           </button>

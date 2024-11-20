@@ -16,7 +16,7 @@ export default NextAuth({
     }),
   ],
   adapter: MongoDBAdapter(clientPromise, {
-    databaseName: 'your_database_name',
+    databaseName: 'todolist',
   }),
   secret: process.env.NEXTAUTH_SECRET,
   debug: true,
